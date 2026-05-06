@@ -1,0 +1,103 @@
+// ========================================================
+//  FreeRTOS - RTOS para Carro Autónomo (Simulador POSIX)
+//  Objectivo: aprender tasks, prioridades, scheduler e optimização
+// ========================================================
+
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
+
+// Estado do carro (partilhado entre tarefas)
+typedef struct {
+    int velocidade;      // km/h
+    int pos_x;
+    float angulo;        // graus
+    int luzes;           // 0 = desligadas, 1 = ligadas
+    char ultima_acao[60];
+} CarroEstado;
+
+static CarroEstado carro = {0, 0, 0.0f, 0, "Parado no início"};
+
+// ====================== TAREFAS ======================
+
+// Tarefa de Travar - PRIORIDADE ALTA (crítica em tempo real)
+void vTarefaTravar(void *pvParameters) {
+    for (;;) {
+        if (carro.velocidade > 0) {
+            carro.velocidade = (carro.velocidade > 25) ? carro.velocidade - 25 : 0;
+        }
+        snprintf(carro.ultima_acao, 60, "TRAVAR (Prioridade Alta)");
+        printf("[TRAVAR Pri:4] Velocidade: %d km/h\n", carro.velocidade);
+        vTaskDelay(pdMS_TO_TICKS(180));
+    }
+}
+
+// Tarefa de Acelerar
+void vTarefaAcelerar(void *pvParameters) {
+    for (;;) {
+        if (carro.velocidade < 110) {
+            carro.velocidade += 12;
+        }
+        carro.pos_x += 4;
+        snprintf(carro.ultima_acao, 60, "ACELERAR");
+        printf("[ACELERAR Pri:3] Vel: %d km/h | Pos: %d\n", carro.velocidade, carro.pos_x);
+        vTaskDelay(pdMS_TO_TICKS(320));
+    }
+}
+
+// Tarefa de Curvar (esquerda ou direita)
+void vTarefaCurvar(void *pvParameters) {
+    int lado = (int)pvParameters;   // 0 = esquerda, 1 = direita
+    for (;;) {
+        if (lado == 0) {
+            carro.angulo -= 14.0f;
+            snprintf(carro.ultima_acao, 60, "CURVAR ESQUERDA");
+        } else {
+            carro.angulo += 14.0f;
+            snprintf(carro.ultima_acao, 60, "CURVAR DIREITA");
+        }
+        printf("[CURVAR Pri:2] Ângulo: %.0f°\n", carro.angulo);
+        vTaskDelay(pdMS_TO_TICKS(450));
+    }
+}
+
+// Tarefa de Luzes
+void vTarefaLuzes(void *pvParameters) {
+    for (;;) {
+        carro.luzes = !carro.luzes;
+        snprintf(carro.ultima_acao, 60, carro.luzes ? "LUZES LIGADAS" : "LUZES DESLIGADAS");
+        printf("[LUZES Pri:1] %s\n", carro.ultima_acao);
+        vTaskDelay(pdMS_TO_TICKS(1200));
+    }
+}
+
+// Tarefa de Monitor (mostra estado do carro periodicamente)
+void vTarefaMonitor(void *pvParameters) {
+    for (;;) {
+        printf("\n=== ESTADO DO CARRO === Vel: %d km/h | Pos X: %d | Ângulo: %.0f° | Luzes: %s | Última: %s\n\n",
+               carro.velocidade, carro.pos_x, carro.angulo,
+               carro.luzes ? "LIGADAS" : "DESLIGADAS", carro.ultima_acao);
+        vTaskDelay(pdMS_TO_TICKS(2500));
+    }
+}
+
+// ====================== MAIN ======================
+int main(void) {
+    printf("=== FreeRTOS RTOS para Carro Autónomo ===\n");
+    printf("Iniciando tarefas do veículo...\n\n");
+
+    // Cria as tarefas com diferentes prioridades (maior número = maior prioridade)
+    xTaskCreate(vTarefaTravar,   "Travar",   configMINIMAL_STACK_SIZE * 2, NULL, 4, NULL);  // prioridade mais alta
+    xTaskCreate(vTarefaAcelerar, "Acelerar", configMINIMAL_STACK_SIZE * 2, NULL, 3, NULL);
+    xTaskCreate(vTarefaCurvar,   "CurvarEsq",configMINIMAL_STACK_SIZE * 2, (void*)0, 2, NULL);
+    xTaskCreate(vTarefaCurvar,   "CurvarDir",configMINIMAL_STACK_SIZE * 2, (void*)1, 2, NULL);
+    xTaskCreate(vTarefaLuzes,    "Luzes",    configMINIMAL_STACK_SIZE * 2, NULL, 1, NULL);
+    xTaskCreate(vTarefaMonitor,  "Monitor",  configMINIMAL_STACK_SIZE * 3, NULL, 1, NULL);
+
+    // Inicia o scheduler do FreeRTOS (o coração do RTOS)
+    vTaskStartScheduler();
+
+    // Nunca deve chegar aqui
+    for(;;);
+    return 0;
+}

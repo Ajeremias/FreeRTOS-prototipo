@@ -1,76 +1,102 @@
-The [FreeRTOS 202411.00](https://github.com/FreeRTOS/FreeRTOS/tree/202411.00) release updates FreeRTOS Kernel, FreeRTOS+TCP, coreMQTT, corePKCS11, coreHTTP, coreJSON, AWS IoT Over-the-air-Updates (OTA), AWS IoT Device Shadow, AWS IoT Jobs, AWS IoT Device Defender, Backoff Algorithm, AWS IoT Fleet Provisioning, coreSNTP, SigV4, and FreeRTOS Cellular Interface libraries to their [202406-LTS](https://github.com/FreeRTOS/FreeRTOS-LTS/blob/202406-LTS/CHANGELOG.md) versions. It also updates coreMQTT Agent to v1.3.0 and MbedTLS to v3.5.1. This release also adds ARMv7-R No_GIC Port Demo, ARMv7-R MPU Port Demos and FreeRTOS_Plus_TCP_IPv6_Demo Windows Simulator Demo. Additionally, all WinSim Demos are updated to use TLSv1.3. This release also updates WolfSSL to version v5.6.4.
+# 🏎️ FreeRTOS Prototype - Autonomous Car Simulation
 
-The [FreeRTOS 202212.00](https://github.com/FreeRTOS/FreeRTOS/tree/202212.00) release updates FreeRTOS Kernel, FreeRTOS+TCP, coreMQTT, corePKCS11, coreHTTP, coreJSON, AWS IoT Over-the-air-Updates (OTA), AWS IoT Device Shadow, AWS IoT Jobs, AWS IoT Device Defender, Backoff Algorithm, AWS IoT Fleet Provisioning, coreSNTP, SigV4, and FreeRTOS Cellular Interface libraries to their [LTS 2.0](https://github.com/FreeRTOS/FreeRTOS-LTS/blob/202210-LTS/CHANGELOG.md) versions. It also updates coreMQTT Agent to v1.2.0 to be compatible with coreMQTT v2.X.X, and updates MbedTLS to v3.2.1. This release also adds Visual Studio static library projects for the FreeRTOS Kernel, FreeRTOS+TCP, Logging, MbedTLS, coreHTTP, and corePKCS11. With the addition of the static library projects, all Visual Studio projects have been updated to use them. Additionally, all demos dependent on coreMQTT have been updated to work with coreMQTT v2.X.X.
+Welcome to the **FreeRTOS Autonomous Car Prototype**. This project is a state-of-the-art simulation of an autonomous vehicle control system, integrating **FreeRTOS** for real-time task management and **OpenCV** with **YOLOv3-tiny** for real-time computer vision and object detection.
 
-## Getting started
-The [FreeRTOS.org](https://www.freertos.org) website contains a [FreeRTOS Kernel Quick Start Guide](https://www.freertos.org/Documentation/01-FreeRTOS-quick-start/01-Beginners-guide/02-Quick-start-guide), a [list of supported devices and compilers](https://www.freertos.org/RTOS_ports.html), the [API reference](https://www.freertos.org/Documentation/02-Kernel/04-API-references/01-Task-creation/00-TaskHandle), and many other resources.
+This prototype was developed to demonstrate the integration of RTOS deterministic behavior with heavy AI workloads in a POSIX (Linux) environment.
 
-### Getting help
-You can use your Github login to get support from both the FreeRTOS community and directly from the primary FreeRTOS developers on our [active support forum](https://forums.freertos.org).  The [FAQ](https://www.freertos.org/Why-FreeRTOS/FAQs) provides another support resource.
+---
 
-## Cloning this repository
-This repo uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to bring in dependent components.
+## 🚀 Getting Started
 
-**Note:** If you download the ZIP file provided by the GitHub UI, you will not get the contents of the submodules. (The ZIP file is also not a valid git repository)
+### 1. Prerequisites
 
-If using Windows, because this repository and its submodules contain symbolic links, set `core.symlinks` to true with the following command:
-```
-git config --global core.symlinks true
-```
-In addition to this, either enable [Developer Mode](https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) or, whenever using a git command that writes to the system (e.g. `git pull`, `git clone`, and `git submodule update --init --recursive`), use a console elevated as administrator so that git can properly create symbolic links for this repository. Otherwise, symbolic links will be written as normal files with the symbolic links' paths in them as text. [This](https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/) gives more explanation.
+Before running the project, ensure you have the following installed on your system (tested on Ubuntu/Debian):
 
-To clone using HTTPS:
-```
-git clone https://github.com/FreeRTOS/FreeRTOS.git --recurse-submodules
-```
-Using SSH:
-```
-git clone git@github.com:FreeRTOS/FreeRTOS.git --recurse-submodules
+#### **System Packages**
+```bash
+sudo apt update
+sudo apt install -y build-essential gcc g++ gdb make pkg-config libopencv-dev
 ```
 
-If you have downloaded the repo without using the `--recurse-submodules` argument, you need to run:
+#### **Python (for AWS & Support Tools)**
+```bash
+sudo apt install -y python3 python3-pip
 ```
+
+### 2. Cloning the Repository
+Since this project uses multiple submodules for the FreeRTOS kernel and libraries, you **must** clone recursively:
+
+```bash
+git clone --recurse-submodules https://github.com/Ajeremias/FreeRTOS-prototipo.git
+```
+
+If you have already cloned it without submodules, run:
+```bash
 git submodule update --init --recursive
 ```
 
-## Repository structure
-This repository contains the FreeRTOS Kernel, a number of supplementary libraries including the LTS ones, and a comprehensive set of example projects.  Many libraries (including the FreeRTOS kernel) are included as Git submodules from their own Git repositories.
+### 3. Building the Project
+The main prototype is located in the `Posix_GCC` demo directory.
 
-### Kernel source code and example projects
-```FreeRTOS/Source``` contains the FreeRTOS kernel source code (submoduled from https://github.com/FreeRTOS/FreeRTOS-Kernel).
+```bash
+cd FreeRTOS/Demo/Posix_GCC
+make clean
+make
+```
 
-```FreeRTOS/Demo``` contains pre-configured example projects that demonstrate the FreeRTOS kernel executing on different hardware platforms and using different compilers.
+### 4. Running the Simulation
+Execute the compiled binary from the same directory:
 
-### Supplementary library source code and example projects
-```FreeRTOS-Plus/Source``` contains source code for additional FreeRTOS component libraries, as well as select partner provided libraries. These subdirectories contain further readme files and links to documentation.
+```bash
+./build/rtos_car
+```
 
-```FreeRTOS-Plus/Demo``` contains pre-configured example projects that demonstrate the FreeRTOS kernel used with the additional FreeRTOS component libraries.
+> [!TIP]
+> **Vision Requirement:** The simulation will attempt to open `/dev/video0` (Webcam). If no camera is found, it will automatically fallback to a simulated obstacle detection mode.
 
-## Previous releases
-[Releases](https://github.com/FreeRTOS/FreeRTOS/releases) contains older FreeRTOS releases.
+---
 
+## 🛠️ Project Structure
 
-## Learning FreeRTOS
+- **`FreeRTOS/Demo/Posix_GCC`**: 📍 **Core Prototype**. Contains the main logic, OpenCV integration, and YOLO models.
+- **`FreeRTOS/Source`**: The FreeRTOS Kernel.
+- **`FreeRTOS-Plus`**: Supplementary libraries including TCP/IP and Trace suites.
+- **`tools/`**: Automation scripts for AWS IoT setup and CMock testing.
 
-For detailed and up-to-date information about FreeRTOS, including getting started guides and documentation for both new and experienced users, please refer to the official FreeRTOS website:
-https://www.freertos.org/
+---
 
-## FreeRTOS Lab Projects
-FreeRTOS Lab projects are libraries and demos that are fully functional, but may be experimental or undergoing optimizations and refactorization to improve memory usage, modularity, documentation, demo usability, or test coverage.
+## 🔌 VS Code Recommended Extensions
 
-Most FreeRTOS Lab libraries can be found in the [FreeRTOS-Labs repository](https://github.com/FreeRTOS/FreeRTOS-Labs).
+To have the best development experience, we recommend installing the following extensions:
 
-A number of FreeRTOS Lab Demos can be found in the [FreeRTOS Github Organization](https://github.com/FreeRTOS) by searching for "Lab" or following [this link](https://github.com/FreeRTOS?q=Lab&type=&language=) to the search results.
+1.  **C/C++ Extension Pack** (Microsoft) - For IntelliSense and debugging.
+2.  **CMake Tools** - For advanced build management.
+3.  **Python** - To run the scripts in the `tools` directory.
+4.  **Cortex-Debug** - If you plan to port this to bare-metal ARM hardware.
 
-## coreMQTT Agent Demos
-The [FreeRTOS/coreMQTT-Agent-Demos](https://github.com/FreeRTOS/coreMQTT-Agent-Demos) repository contains demos to showcase use of the [coreMQTT-Agent](https://github.com/FreeRTOS/coreMQTT-Agent) library to share an MQTT connection between multiple application tasks.
+---
 
-The demos show a single MQTT connection usage between multiple application tasks for interacting with AWS services (including [Over-the-air-Updates](https://docs.aws.amazon.com/freertos/latest/userguide/freertos-ota-dev.html), [Device Shadow](https://docs.aws.amazon.com/iot/latest/developerguide/iot-device-shadows.html),
- [Device Defender](https://docs.aws.amazon.com/iot/latest/developerguide/device-defender.html)) alongside performing simple Publish-Subscribe operations.
-## CBMC
+## 🧠 Core Features
 
-The `FreeRTOS/Test/CBMC/proofs` directory contains CBMC proofs.
+- **Real-Time Task Scheduling**: Separate tasks for Vision (High Priority), Control, and Monitoring.
+- **Object Detection**: Uses YOLOv3-tiny to detect people and cars in real-time.
+- **Safety Interlocks**: Automatic emergency braking when obstacles are detected.
+- **POSIX Simulator**: Allows development and testing directly on Linux without dedicated hardware.
 
-To learn more about CBMC and proofs specifically, review the training material [here](https://model-checking.github.io/cbmc-training).
+---
 
-In order to run these proofs you will need to install CBMC and other tools by following the instructions [here](https://model-checking.github.io/cbmc-training/installation.html).
+## 🤝 Forking & Contributing
+
+1. **Fork** the project.
+2. Create your **Feature Branch** (`git checkout -b feature/AmazingFeature`).
+3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`).
+4. **Push** to the branch (`git push origin feature/AmazingFeature`).
+5. Open a **Pull Request**.
+
+---
+
+## 📜 License
+This project is based on the FreeRTOS distribution and is licensed under the **MIT License**. See the [LICENSE.md](LICENSE.md) file for details.
+
+---
+*Developed by Ajeremias as part of the FreeRTOS Autonomous Systems Prototype series.*

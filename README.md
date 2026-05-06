@@ -1,42 +1,42 @@
-# 🏎️ FreeRTOS Prototype - Autonomous Car Simulation
+# 🏎️ Protótipo FreeRTOS - Simulação de Carro Autónomo
 
-Welcome to the **FreeRTOS Autonomous Car Prototype**. This project is a state-of-the-art simulation of an autonomous vehicle control system, integrating **FreeRTOS** for real-time task management and **OpenCV** with **YOLOv3-tiny** for real-time computer vision and object detection.
+Bem-vindo ao **Protótipo de Carro Autónomo com FreeRTOS**. Este projecto é uma simulação de ponta de um sistema de controlo de veículos autónomos, integrando o **FreeRTOS** para a gestão de tarefas em tempo real e o **OpenCV** com o **YOLOv3-tiny** para a visão computacional e detecção de objectos em tempo real.
 
-This prototype was developed to demonstrate the integration of RTOS deterministic behavior with heavy AI workloads in a POSIX (Linux) environment.
+Este protótipo foi desenvolvido para demonstrar a integração do comportamento determinístico do RTOS com cargas de trabalho pesadas de IA num ambiente POSIX (Linux).
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Como Começar
 
-### 1. Prerequisites
+### 1. Pré-requisitos
 
-Before running the project, ensure you have the following installed on your system (tested on Ubuntu/Debian):
+Antes de rodar o projecto, certifique-se de que tem o seguinte instalado no seu sistema (testado em Ubuntu/Debian):
 
-#### **System Packages**
+#### **Pacotes do Sistema**
 ```bash
 sudo apt update
 sudo apt install -y build-essential gcc g++ gdb make pkg-config libopencv-dev
 ```
 
-#### **Python (for AWS & Support Tools)**
+#### **Python (para ferramentas AWS e Suporte)**
 ```bash
 sudo apt install -y python3 python3-pip
 ```
 
-### 2. Cloning the Repository
-Since this project uses multiple submodules for the FreeRTOS kernel and libraries, you **must** clone recursively:
+### 2. Clonar o Repositório
+Como este projecto utiliza vários sub-módulos para o kernel do FreeRTOS e outras bibliotecas, você **deve** clonar de forma recursiva:
 
 ```bash
 git clone --recurse-submodules https://github.com/Ajeremias/FreeRTOS-prototipo.git
 ```
 
-If you have already cloned it without submodules, run:
+Se já clonou sem os sub-módulos, execute:
 ```bash
 git submodule update --init --recursive
 ```
 
-### 3. Building the Project
-The main prototype is located in the `Posix_GCC` demo directory.
+### 3. Compilar o Projecto
+O protótipo principal está localizado no directório da demo `Posix_GCC`.
 
 ```bash
 cd FreeRTOS/Demo/Posix_GCC
@@ -44,59 +44,59 @@ make clean
 make
 ```
 
-### 4. Running the Simulation
-Execute the compiled binary from the same directory:
+### 4. Executar a Simulação
+Execute o binário compilado a partir do mesmo directório:
 
 ```bash
 ./build/rtos_car
 ```
 
 > [!TIP]
-> **Vision Requirement:** The simulation will attempt to open `/dev/video0` (Webcam). If no camera is found, it will automatically fallback to a simulated obstacle detection mode.
+> **Requisito de Visão:** A simulação tentará abrir a `/dev/video0` (Webcam). Se não encontrar nenhuma câmara, o sistema entrará automaticamente no modo de fallback com detecção de obstáculos simulada.
 
 ---
 
-## 🛠️ Project Structure
+## 🛠️ Estrutura do Projecto
 
-- **`FreeRTOS/Demo/Posix_GCC`**: 📍 **Core Prototype**. Contains the main logic, OpenCV integration, and YOLO models.
-- **`FreeRTOS/Source`**: The FreeRTOS Kernel.
-- **`FreeRTOS-Plus`**: Supplementary libraries including TCP/IP and Trace suites.
-- **`tools/`**: Automation scripts for AWS IoT setup and CMock testing.
-
----
-
-## 🔌 VS Code Recommended Extensions
-
-To have the best development experience, we recommend installing the following extensions:
-
-1.  **C/C++ Extension Pack** (Microsoft) - For IntelliSense and debugging.
-2.  **CMake Tools** - For advanced build management.
-3.  **Python** - To run the scripts in the `tools` directory.
-4.  **Cortex-Debug** - If you plan to port this to bare-metal ARM hardware.
+- **`FreeRTOS/Demo/Posix_GCC`**: 📍 **Protótipo Principal**. Contém a lógica central, integração com OpenCV e os modelos YOLO.
+- **`FreeRTOS/Source`**: O Kernel do FreeRTOS.
+- **`FreeRTOS-Plus`**: Bibliotecas suplementares, incluindo as suites TCP/IP e Trace.
+- **`tools/`**: Scripts de automação para configuração do AWS IoT e testes CMock.
 
 ---
 
-## 🧠 Core Features
+## 🔌 Extensões Recomendadas para o VS Code
 
-- **Real-Time Task Scheduling**: Separate tasks for Vision (High Priority), Control, and Monitoring.
-- **Object Detection**: Uses YOLOv3-tiny to detect people and cars in real-time.
-- **Safety Interlocks**: Automatic emergency braking when obstacles are detected.
-- **POSIX Simulator**: Allows development and testing directly on Linux without dedicated hardware.
+Para ter a melhor experiência de desenvolvimento, recomendamos a instalação das seguintes extensões:
 
----
-
-## 🤝 Forking & Contributing
-
-1. **Fork** the project.
-2. Create your **Feature Branch** (`git checkout -b feature/AmazingFeature`).
-3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`).
-4. **Push** to the branch (`git push origin feature/AmazingFeature`).
-5. Open a **Pull Request**.
+1.  **C/C++ Extension Pack** (Microsoft) - Para IntelliSense e depuração (debugging).
+2.  **CMake Tools** - Para uma gestão avançada da compilação.
+3.  **Python** - Para correr os scripts no directório `tools`.
+4.  **Cortex-Debug** - Caso pretenda portar este projecto para hardware ARM (bare-metal).
 
 ---
 
-## 📜 License
-This project is based on the FreeRTOS distribution and is licensed under the **MIT License**. See the [LICENSE.md](LICENSE.md) file for details.
+## 🧠 Funcionalidades Principais
+
+- **Escalonamento em Tempo Real**: Tarefas separadas para Visão (Alta Prioridade), Controlo e Monitoria.
+- **Detecção de Objectos**: Utiliza o YOLOv3-tiny para detectar pessoas e carros em tempo real.
+- **Travagem de Segurança**: Sistema de travagem de emergência automático ao detectar obstáculos.
+- **Simulador POSIX**: Permite o desenvolvimento e testes directamente no Linux sem necessidade de hardware dedicado.
 
 ---
-*Developed by Ajeremias as part of the FreeRTOS Autonomous Systems Prototype series.*
+
+## 🤝 Fork e Contribuição
+
+1. Faça o **Fork** do projecto.
+2. Crie a sua **Branch de Funcionalidade** (`git checkout -b feature/MinhaFuncionalidade`).
+3. Faça o **Commit** das suas alterações (`git commit -m 'Adiciona MinhaFuncionalidade'`).
+4. Faça o **Push** para a branch (`git push origin feature/MinhaFuncionalidade`).
+5. Abra um **Pull Request**.
+
+---
+
+## 📜 Licença
+Este projecto baseia-se na distribuição oficial do FreeRTOS e está licenciado sob a **Licença MIT**. Consulte o ficheiro [LICENSE.md](LICENSE.md) para mais detalhes.
+
+---
+*Desenvolvido por Ajeremias como parte da série de Protótipos de Sistemas Autónomos com FreeRTOS.*

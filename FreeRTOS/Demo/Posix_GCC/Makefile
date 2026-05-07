@@ -6,11 +6,9 @@ NO_TRACING            ?= 1
 BUILD_DIR             := ./build
 BUILD_DIR_ABS         := $(abspath $(BUILD_DIR))
 
-FREERTOS_DIR_REL      := ../../../FreeRTOS
-FREERTOS_DIR          := $(abspath $(FREERTOS_DIR_REL))
+FREERTOS_DIR          := ../../../FreeRTOS
 
-FREERTOS_PLUS_DIR_REL := ../../../FreeRTOS-Plus
-FREERTOS_PLUS_DIR     := $(abspath $(FREERTOS_PLUS_DIR_REL))
+FREERTOS_PLUS_DIR     := ../../../FreeRTOS-Plus
 
 KERNEL_DIR            := ${FREERTOS_DIR}/Source
 
@@ -66,7 +64,7 @@ SOURCE_FILES          += ${FREERTOS_DIR}/Demo/Common/Minimal/TimerDemo.c
 
 CFLAGS                :=    -ggdb3
 LDFLAGS               :=    -ggdb3 -pthread
-CPPFLAGS              :=    $(INCLUDE_DIRS) -DBUILD_DIR=\"$(BUILD_DIR_ABS)\"
+CPPFLAGS              :=    $(INCLUDE_DIRS)
 CPPFLAGS              +=    -D_WINDOWS_
 
 ifeq ($(TRACE_ON_ENTER),1)

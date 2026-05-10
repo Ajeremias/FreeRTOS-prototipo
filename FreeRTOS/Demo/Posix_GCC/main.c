@@ -1,13 +1,13 @@
 /**
  * ============================================================================
- * @file main.c
- * @brief Sistema de Controle de Carro Autónomo com FreeRTOS e OpenCV.
+ * @nome do ficheiro: main.c
+ * @Resumo: Sistema de Controle de Carro Autónomo com FreeRTOS e OpenCV.
  * 
  * Este programa simula um sistema de tempo real para um veículo autónomo.
  * Utiliza o FreeRTOS para gestão de tarefas e o OpenCV com YOLOv3-tiny para
  * detecção de obstáculos via visão computacional.
  * 
- * @author Antigravity (Otimizado por IA)
+ * @author Alcinda Jeremias, Candida Lima(Otimizado por IA)
  * @date 2026
  * ============================================================================
  */
@@ -61,7 +61,7 @@ extern "C" {
 // ============================================================================
 
 /**
- * @brief Enumeração de comandos possíveis para o veículo.
+ *  Enumeração de comandos possíveis para o veículo.
  */
 typedef enum {
     CMD_ACELERAR,        // Aumenta a velocidade
@@ -72,7 +72,7 @@ typedef enum {
 } CarCommand;
 
 /**
- * @brief Estrutura que representa o estado atual do carro.
+ * Estrutura que representa o estado atual do carro.
  */
 typedef struct {
     int velocidade;      // Velocidade atual em km/h
@@ -159,8 +159,8 @@ static bool bDetectarObstaculo(const std::vector<cv::Mat>& outs, int &out_id) {
 // ============================================================================
 
 /**
- * @brief TAREFA: Visão Artificial (OpenCV)
- * Captura frames da webcam, processa-os via YOLO e envia comandos de emergência
+ * TAREFA: Visão Artificial (OpenCV)
+ * Capturar frames da webcam, processar via YOLO e enviar comandos de emergência
  * se detectar perigo iminente.
  */
 void vTarefaVisionOpenCV(void *pvParameters) {
@@ -182,7 +182,7 @@ void vTarefaVisionOpenCV(void *pvParameters) {
                 CarCommand cmd = CMD_TRAVAR_URGENTE;
                 // Envia para a frente da fila (alta prioridade)
                 xQueueSendToFront(xComandoQueue, &cmd, 0);
-                printf("[VISION] ⚠️ Obstáculo simulado detectado!\n");
+                printf("[VISION]  Obstáculo simulado detectado!\n");
             }
             vTaskDelay(pdMS_TO_TICKS(1000)); // Espera 1 segundo
         }
@@ -212,7 +212,7 @@ void vTarefaVisionOpenCV(void *pvParameters) {
             xQueueSendToFront(xComandoQueue, &cmd, pdMS_TO_TICKS(10));
             
             const char* nome = (id_detectado == PERSON_CLASS_ID) ? "PESSOA" : "CARRO";
-            printf("[VISION] 🚨 %s detetado! Travagem urgente enviada.\n", nome);
+            printf("[VISION] %s detetado! Travagem urgente enviada.\n", nome);
         }
 
         vTaskDelay(VISION_PERIOD); // Libera o CPU para outras tarefas
@@ -220,7 +220,7 @@ void vTarefaVisionOpenCV(void *pvParameters) {
 }
 
 /**
- * @brief TAREFA: Lógica de Controle
+ * TAREFA: Lógica de Controle
  * Processa comandos vindos da fila e atualiza o estado do veículo de forma segura.
  */
 void vTarefaControlo(void *pvParameters) {
@@ -237,7 +237,7 @@ void vTarefaControlo(void *pvParameters) {
                         // Reduz velocidade de forma brusca
                         carro.velocidade = (carro.velocidade > 30) ? carro.velocidade - 40 : 0;
                         strncpy(carro.ultima_acao, "TRAVAGEM URGENTE", 64);
-                        printf("[CONTROLO] 🚨 Travagem de Emergência!\n");
+                        printf("[CONTROLO]  Travagem de Emergência!\n");
                         break;
 
                     case CMD_ACELERAR:
@@ -272,13 +272,13 @@ void vTarefaControlo(void *pvParameters) {
 }
 
 /**
- * @brief TAREFA: Monitorização (Telemetria)
- * Exibe periodicamente no console o estado atual do veículo.
+ *  TAREFA: Monitorização (Telemetria)
+ * Exibir periodicamente no console o estado atual do veículo.
  */
 void vTarefaMonitor(void *pvParameters) {
     (void)pvParameters;
     for (;;) {
-        // Solicita acesso ao estado do carro (leitura segura)
+        // Solicitar acesso ao estado do carro (leitura segura)
         if (xSemaphoreTake(xCarroMutex, portMAX_DELAY) == pdTRUE) {
             printf("\n--- TELEMETRIA ---\n");
             printf("Velocidade: %3d km/h\n", carro.velocidade);
@@ -288,7 +288,7 @@ void vTarefaMonitor(void *pvParameters) {
             printf("------------------\n");
             xSemaphoreGive(xCarroMutex);
         }
-        vTaskDelay(MONITOR_PERIOD); // Aguarda o próximo ciclo de exibição
+        vTaskDelay(MONITOR_PERIOD); // Aguardar o próximo ciclo de exibição
     }
 }
 
@@ -297,7 +297,7 @@ void vTarefaMonitor(void *pvParameters) {
 // ============================================================================
 
 int main(void) {
-    printf("\n=== FreeRTOS Autonomous Car Simulator ===\n");
+    printf("\n=== FreeRTOS simulador do carro autonomos ===\n");
     printf("Iniciando recursos...\n");
 
     // Cria o Mutex para proteção de dados globais
@@ -317,7 +317,7 @@ int main(void) {
     xTaskCreate(vTarefaControlo,     "Control", STACK_SIZE_CONTROL, NULL, PRIORITY_CONTROL, NULL);
     xTaskCreate(vTarefaMonitor,      "Monitor", STACK_SIZE_MONITOR, NULL, PRIORITY_MONITOR, NULL);
 
-    // Inicia o Escalonador de Tarefas (o controle passa para o FreeRTOS aqui)
+    // Inicia o Escalonador de Tarefas (o controle passa para o FreeRTOS a paryir daqui)
     vTaskStartScheduler();
 
     // Este ponto só é atingido se houver falta de memória para iniciar o scheduler
@@ -331,7 +331,7 @@ int main(void) {
 
 extern "C" {
 /**
- * @brief Chamado quando uma tentativa de alocação de memória (malloc) falha.
+ * E Chamado quando uma tentativa de alocação de memória (malloc) falha.
  */
 void vApplicationMallocFailedHook( void ) {
     fprintf(stderr, "Erro: Falha na alocação de memória (Malloc Failed)\n");
@@ -339,7 +339,7 @@ void vApplicationMallocFailedHook( void ) {
 }
 
 /**
- * @brief Chamado em caso de erro interno do kernel (configASSERT).
+ *     E Chamado em caso de erro interno do kernel (configASSERT).
  */
 void vAssertCalled( const char * const pcFileName, unsigned long ulLine ) {
     fprintf(stderr, "Assert falhou em %s:%lu\n", pcFileName, ulLine);
@@ -352,7 +352,7 @@ void vApplicationTickHook( void ) {}
 void vApplicationDaemonTaskStartupHook( void ) {}
 
 /**
- * @brief Fornece memória estática para a Tarefa Idle do sistema.
+ * Fornece memória estática para a Tarefa Idle do sistema.
  */
 void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
                                     StackType_t **ppxIdleTaskStackBuffer,
@@ -366,7 +366,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
 }
 
 /**
- * @brief Fornece memória estática para a Tarefa de Timer do sistema.
+ * Fornece memória estática para a Tarefa de Timer do sistema.
  */
 void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer,
                                      StackType_t **ppxTimerTaskStackBuffer,
